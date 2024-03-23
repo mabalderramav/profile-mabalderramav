@@ -1,19 +1,8 @@
-const YOUTUBE_API =
-  "https://youtube-v31.p.rapidapi.com/search?channelId=UCw05fUBPwmpu-ehXFMqfdMw&part=snippet%2Cid&order=date&maxResults=9";
-
 const LINKEDIN_API =
   "https://linkedin-api8.p.rapidapi.com/?username=miguel-aldo-balderrama-vaca-b69a04122";
 
 const content = null || document.getElementById("content");
 const titleH1 = null || document.querySelector("div[id='profileTitle']");
-
-const youtubeOptions = {
-  method: "GET",
-  headers: {
-    "X-RapidAPI-Key": "dae2529088mshf13a4d119490960p164159jsnfbcbb21728c5",
-    "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
-  },
-};
 
 const linkedinOptions = {
   method: "GET",
@@ -32,7 +21,8 @@ async function fetchData(urlApi, options) {
 (async () => {
   try {
     const linkedinData = await fetchData(LINKEDIN_API, linkedinOptions);
-    console.info(linkedinData);
+
+    // Profile title.
     let view = `
       <h1
           class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
@@ -59,34 +49,28 @@ async function fetchData(urlApi, options) {
       </p>
     `;
     titleH1.innerHTML = view;
-  } catch (error) {
-    console.error(error);
-  }
-})();
 
-(async () => {
-  try {
-    const videos = await fetchData(YOUTUBE_API, youtubeOptions);
-    let view = `
-	${videos.items
-    .map(
-      (video) => `
-		<div class="group relative">
-			<div
-				class="w-full bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:aspect-none">
-				<img src="${video.snippet.thumbnails.high.url}" alt="${video.snippet.description}" class="w-full">
-			</div>
-			<div class="mt-4 flex justify-between">
-				<h3 class="text-sm text-gray-700">
-					<span aria-hidden="true" class="absolute inset-0"></span>
-					${video.snippet.title}
-				</h3>
-			</div>
-		</div>
-	`
-    )
-    .slice(0, 4)
-    .join("")}
+    // Last 8 certifications.
+    view = `
+    ${linkedinData.certifications
+      .map(
+        (certification) => `
+      <div class="group relative">
+        <div
+          class="w-full bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:aspect-none">
+          <img src="${certification.company.logo}" alt="${certification.company.name}" class="w-full">
+        </div>
+        <div class="mt-4 flex justify-between">
+          <h3 class="text-sm text-gray-700">
+            <span aria-hidden="true" class="absolute inset-0"></span>
+            ${certification.name}
+          </h3>
+        </div>
+      </div>
+    `
+      )
+      .slice(0, 8)
+      .join("")}
 	`;
     content.innerHTML = view;
   } catch (error) {
